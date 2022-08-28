@@ -1,5 +1,6 @@
 import * as PIXI from "pixi.js"
 
+// Simple example of usage pixi.js without react-reconciler
 const app = new PIXI.Application({
     width: 800, height: 600, backgroundColor: 0x1099bb, resolution: window.devicePixelRatio || 1,
 });

@@ -24,13 +24,55 @@ render(<App />, app.stage);
 const texture = PIXI.Texture.from(sprite);
 
 function App() {
-  return <sprite texture={texture} width={100} height={100}></sprite>;
+  return <sprite texture={texture} width={100} height={100} />;
 }
 ```
 
-### `npm install`
+## Using with ReactDOM renderer
 
-### `npm start`
+```jsx
+import React from "react";
+import * as PIXI from "pixi.js";
+import sprite from "./assets/sprite.png";
+import ReactDOM from "react-dom/client";
+import Stage from "./components/Stage";
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+const container = document.getElementById("container");
+const root = ReactDOM.createRoot(container);
+root.render(<App />);
+
+const texture = PIXI.Texture.from(sprite);
+
+function App() {
+  return (
+    <Stage options={{ backgroundColor: 0x4be3b3 }}>
+      <sprite texture={texture} width={100} height={100} x={100} y={100} />
+    </Stage>
+  );
+}
+```
+
+## Pass canvas element
+
+```jsx
+import React from "react";
+import * as PIXI from "pixi.js";
+import sprite from "./assets/sprite.png";
+import ReactDOM from "react-dom/client";
+import Stage from "./components/Stage";
+
+const container = document.getElementById("container");
+const root = ReactDOM.createRoot(container);
+root.render(<App />);
+
+const canvas = document.getElementById("root");
+const texture = PIXI.Texture.from(sprite);
+
+function App() {
+  return (
+    <Stage root={canvas} options={{ backgroundColor: 0x4be3b3 }}>
+      <sprite texture={texture} width={100} height={100} x={100} y={100} />
+    </Stage>
+  );
+}
+```

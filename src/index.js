@@ -1,45 +1,21 @@
-import React, { useCallback, useState } from 'react';
-import { render } from './fiber/renderer';
+import React from 'react';
 import * as PIXI from "pixi.js";
 import sprite from './assets/sprite.png';
+import ReactDOM from 'react-dom/client';
+import Stage from './components/Stage';
 
-const canvas = document.getElementById('root');
-
-const app = new PIXI.Application({
-    width: 800,
-    height: 600,
-    view: canvas,
-    backgroundColor: 0x4be3b3,
-});
-
-
-render(<App />, app.stage);
+const container = document.getElementById('container');
+const root = ReactDOM.createRoot(container)
+root.render(<App />)
 
 
 const texture = PIXI.Texture.from(sprite);
 
 function App() {
-    const [x, setX] = useState(0);
-    const [y, setY] = useState(0);
-
-    const handleKeyDown = useCallback(({ key }) => {
-        if (key === 'd') {
-            setX(prev => prev + 50);
-        } else if (key === 'a') {
-            setX(prev => prev - 50);
-        } else if (key === 'w') {
-            setY(prev => prev - 50);
-        }
-        else if (key === 's') {
-            setY(prev => prev + 50);
-        }
-    }, []);
-
-    const params = {
-        texture,
-        width: 100,
-        height: 100
-    };
-    return (<>
-        <sprite {...params} x={x} y={y} onKeyDown={handleKeyDown} /></>);
+    return (
+        <Stage options={{ backgroundColor: 0x4be3b3 }}>
+            <sprite texture={texture} width={100} height={100} />
+            <sprite texture={texture} width={100} height={100} x={100} y={0} />
+        </Stage>
+    );
 }

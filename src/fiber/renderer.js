@@ -1,9 +1,39 @@
 import Reconciler from 'react-reconciler';
 import * as PIXI from "pixi.js";
 
+const createInstance = (type, props) => {
+    let instance;
+
+    if (type === 'container') {
+        instance = new PIXI.Container();
+    } else if (type === 'sprite') {
+        const { x = 0, y = 0, width, height } = props;
+
+        instance = new PIXI.Sprite(props.texture);
+
+        if (width && height) {
+            instance.width = width;
+            instance.height = height;
+        }
+
+        if (props.onKeyDown) {
+            document.addEventListener('keypress', props.onKeyDown)
+        }
+        instance.x = x;
+        instance.y = y;
+    } else if (type === 'text') {
+        instance = new PIXI.Text(props.text, props.style, props.canvas);
+    } else {
+        throw new Error(`Type ${type} is not supported!`)
+    }
+
+    return instance;
+};
+
 const hostConfig = {
     now: Date.now,
     supportsMutation: true,
+    isPrimaryRenderer: false,
 
     shouldSetTextContent: (type, props) => { // 3, 5
         return (
@@ -12,34 +42,7 @@ const hostConfig = {
             props.dangerouslySetInnerHTML.__html !== null
         );
     },
-    createInstance: (type, props) => { // 6
-        let instance;
-
-        if (type === 'container') {
-            instance = new PIXI.Container();
-        } else if (type === 'sprite') {
-            const { x = 0, y = 0, width, height } = props;
-
-            instance = new PIXI.Sprite(props.texture);
-
-            if (width && height) {
-                instance.width = width;
-                instance.height = height;
-            }
-
-            if (props.onKeyDown) {
-                document.addEventListener('keypress', props.onKeyDown)
-            }
-            instance.x = x;
-            instance.y = y;
-        } else if (type === 'text') {
-            instance = new PIXI.Text(props.text, props.style, props.canvas);
-        } else {
-            throw new Error(`Type ${type} is not supported!`)
-        }
-
-        return instance;
-    },
+    createInstance: createInstance,
     createTextInstance(text) {
         return document.createTextNode(text);
     },

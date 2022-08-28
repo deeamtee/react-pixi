@@ -1,14 +1,19 @@
-import React from "react";
 import * as PIXI from "pixi.js";
+import { render } from "../fiber/renderer";
 
-const Stage = ({ children, width, height, options }) => {
+const Stage = ({ children, root, width, height, options }) => {
   const app = new PIXI.Application({
     width,
     height,
+    view: root,
     ...options,
   });
 
-  return <>{children}</>;
+  if (!root) {
+    document.body.appendChild(app.view);
+  }
+
+  render(children, app.stage);
 };
 
 Stage.defaultProps = {
