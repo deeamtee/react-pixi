@@ -18,11 +18,24 @@ const hostConfig = {
         if (type === 'container') {
             instance = new PIXI.Container();
         } else if (type === 'sprite') {
+            const { x = 0, y = 0, width, height } = props;
+
             instance = new PIXI.Sprite(props.texture);
-            instance.width = props.width;
-            instance.height = props.height;
+
+            if (width && height) {
+                instance.width = width;
+                instance.height = height;
+            }
+
+            if (props.onKeyDown) {
+                document.addEventListener('keypress', props.onKeyDown)
+            }
+            instance.x = x;
+            instance.y = y;
         } else if (type === 'text') {
             instance = new PIXI.Text(props.text, props.style, props.canvas);
+        } else {
+            throw new Error(`Type ${type} is not supported!`)
         }
 
         return instance;
@@ -37,13 +50,20 @@ const hostConfig = {
         container.addChild(child);
     },
     removeChild: (parentInstance, child) => {
-        child.remove();
+        child.removeChild();
     },
     removeChildFromContainer: (container, child) => {
-        child.remove();
+        child.removeChild();
     },
     clearContainer: (container) => {
         container.innerHTML = '';
+    },
+    prepareUpdate: (instance, type, oldProps, newProps) => newProps,
+    commitUpdate: (instance, updatePayload, type, oldProps, newProps) => {
+        if (updatePayload) {
+            instance.x = updatePayload.x
+            instance.y = updatePayload.y
+        }
     },
     getPublicInstance: (instance) => {
         return instance;
