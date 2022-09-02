@@ -16,9 +16,18 @@ const createInstance = (type, props) => {
             instance.height = height;
         }
 
-        if (props.onKeyDown) {
-            document.addEventListener('keypress', props.onKeyDown)
+        /** Фильтруем свойства начинающиеся с 'on' и далее заглавной буквой. Например, onClick */
+        const eventHandlers = Object.keys(props).filter((key) => key.startsWith('on'));
+        if (eventHandlers) {
+            eventHandlers.forEach((handler) => {
+                if (/[A-Z]/.test(handler[2])) {
+                    instance.interactive = true;
+                    const eventName = handler.replace('on', '').toLowerCase();
+                    instance.on(eventName, props[handler]);
+                }
+            })
         }
+
         instance.x = x;
         instance.y = y;
     } else if (type === 'text') {
