@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import sprite from './assets/sprite.png';
 import ReactDOM from 'react-dom/client';
 import Stage from './components/Stage';
@@ -19,14 +19,21 @@ function App() {
 }
 
 function Scene() {
-    const [x, setX] = useState(50);
+    const [display, setDisplay] = useState(true);
+    const [rotation, setRotation] = useState(0);
+
     useTick((delta) => {
-        setX(prev => prev + 2 * delta)
+        setRotation(prev => prev + 0.1 * delta)
     });
+
+    const handleClick = useCallback(() => {
+        setDisplay(prev => !prev)
+    }, []);
+
     return (
         <>
-            <Sprite img={sprite} width={100} height={100} x={100} y={100} onClick={(event) => console.log(event)} />
-            <Sprite img={sprite} width={100} height={100} x={x} y={0} />
+            <Sprite img={sprite} width={100} height={100} position={[100, 100]} rotation={rotation} onClick={handleClick} />
+            {display && <Sprite img={sprite} width={100} height={100} position={[0, 0]} />}
         </>
     );
 }

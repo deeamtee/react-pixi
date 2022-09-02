@@ -7,7 +7,8 @@ const createInstance = (type, props) => {
     if (type === 'container') {
         instance = new PIXI.Container();
     } else if (type === 'sprite') {
-        const { x = 0, y = 0, width, height } = props;
+        const { position = [], width, height, rotation } = props;
+        const [x = 0, y = 0] = position;
 
         instance = new PIXI.Sprite(props.texture);
 
@@ -26,6 +27,10 @@ const createInstance = (type, props) => {
                     instance.on(eventName, props[handler]);
                 }
             })
+        }
+
+        if (rotation) {
+            instance.rotation = rotation;
         }
 
         instance.x = x;
@@ -55,6 +60,9 @@ const hostConfig = {
     createTextInstance(text) {
         return document.createTextNode(text);
     },
+    detachDeletedInstance: (instance) => {
+        instance.renderable = false;
+    },
     appendInitialChild: (parent, child) => {
         parent.addChild(child);
     },
@@ -73,8 +81,15 @@ const hostConfig = {
     prepareUpdate: (instance, type, oldProps, newProps) => newProps,
     commitUpdate: (instance, updatePayload, type, oldProps, newProps) => {
         if (updatePayload) {
-            instance.x = updatePayload.x
-            instance.y = updatePayload.y
+            const { position, rotation } = updatePayload;
+            const [x, y] = position;
+
+            instance.x = x
+            instance.y = y
+
+            if (rotation) {
+                instance.rotation = rotation;
+            }
         }
     },
     getPublicInstance: (instance) => {
